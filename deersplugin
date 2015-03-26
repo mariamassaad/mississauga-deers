@@ -24,6 +24,7 @@
 	border-left: 6px solid #fff;
 	border-right: 6px solid #fff; 
 }
+
 .marquee .marquee_panel .panel_caption * { color: #000000; line-height: 20px; }
 .marquee .marquee_panel .panel_caption h3 { margin: 0px 0px 8px 0px; font-weight: normal; font-size: 1.8em; }
 .marquee .marquee_panel .panel_caption p { margin: 0px 0px 15px 0px; color: #888; font-size: 1.1em; }
