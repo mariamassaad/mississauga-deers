@@ -1,7 +1,7 @@
 ###########################################################
 #                                                         #
 #                      ASSIGNMENT 4:                      # 
-#                    wORDPRESS PLUGIN                     #
+#                    WORDPRESS PLUGIN                     #
 #                                                         #
 #               CCT460 Advanced Web Design                #
 #                                                         #
