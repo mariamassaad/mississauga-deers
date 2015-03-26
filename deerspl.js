@@ -1,62 +1,174 @@
-/*  CSS Document                                               */
-/*  Main CSS for the layout and style of the Homepage Marquee  */
-
-.marquee { height: 500px; width: 80% background-color: #ddd; }
-.marquee * { font-family: 'Source Sans Pro'; }
-
-.marquee .marquee_data { display: none; }
-
-.marquee .marquee_stage_large { height: inherit; position: relative; overflow: hidden; }
-
-.marquee .marquee_container_1, .marquee .marquee_container_2 { height: inherit; position: absolute; top: 0px; left: 0px; width: 100%; }
-.marquee .marquee_container_1 { z-index: 101; }
-.marquee .marquee_container_2 { z-index: 102; }
-
-.marquee .marquee_panel { height: inherit; position: absolute; top: 0px; left: 0px; width: 100%; text-align: center; background-repeat: no-repeat; background-position: 100% 0px; }
-
-.marquee .marquee_panel .panel_caption {
-	width: 400px;
-	background: rgba(255,255,255,.85);
-	position: absolute; bottom: 0px; left: 15%;
-	text-align: left;
-	padding: 15px 15px 65px 20px; 
-	border-top: 6px solid #fff;
-	border-left: 6px solid #fff;
-	border-right: 6px solid #fff; 
-}
-.marquee .marquee_panel .panel_caption * { color: #000000; line-height: 20px; }
-.marquee .marquee_panel .panel_caption h3 { margin: 0px 0px 8px 0px; font-weight: normal; font-size: 1.8em; }
-.marquee .marquee_panel .panel_caption p { margin: 0px 0px 15px 0px; color: #888; font-size: 1.1em; }
-.marquee .marquee_panel .panel_caption a, .marquee .marquee_panel .panel_caption a:visited { color: #000000; text-decoration: underline; }
-.marquee .marquee_panel .panel_caption a:hover { text-decoration: none; }
-
-.marquee .marquee_nav { z-index: 103; position: absolute; bottom: 20px; left: 15%; text-align: left; width: 400px; padding: 0px 0px 0px 23px; }
-.marquee .marquee_nav div {
-	transition: background-color 1s linear;
-	display: inline-block; width: 15px; height: 15px;
-	background-color: rgba(255,255,255,.8);
-	border: 2px solid #888;
-	border-radius: 50%;
-	margin: 0px 10px 0px 0px;
-	cursor: pointer;
+var deersVars = {
+	screenSize : '',
+	width : 0,
+	mobileSize : 600,
+	autoPlay : true,
+	currentPanel : 1,
+	totalPanels : 0,
+	timePassed : 0,
+	timeToChange : 50,
+	inTansition : false,
+	panelContent : Array
 }
 
-.marquee .marquee_nav div:hover { background-color: rgba(0,0,0,.2); transition: background-color .1s linear; }
+function deersAdvance(){
 
-.marquee .marquee_nav div.selected { background-color: rgba(0,0,0,.5); }
+	// check browser width
+	var browserWidth = jQuery('.deers').width();
+	var currentSize = deersVars.screenSize;
+	if(browserWidth > deersVars.mobileSize){
+		var newWidth = 'large';
+		deersVars.screenSize = 'large';
+	}else{
+		var newWidth = 'small'
+		deersVars.screenSize = 'small';
+	}
+	
+	// detect change in screen size variable
+	if(currentSize != newWidth){
+		if(deersVars.screenSize == 'large'){
+			deersMultiPanel();
+		}else{
+			deersSinglePanel();
+		}
+	}
+	
+	// advance the timer and large deers
+	if (deersVars.timePassed == deersVars.timeToChange){
+		deersVars.timePassed = 0;
+		if (deersVars.autoPlay == true){
+			if(deersVars.currentPanel == deersVars.totalPanels){
+				jQuery('.deers_nav div:nth-child(1)').trigger('click');
+			}else{
+				jQuery('.deers_nav div:nth-child('+(deersVars.currentPanel+1)+')').trigger('click');
+			}
+		}
+	}else{
+		deersVars.timePassed += 1;
+	}
+	setDebuger();
+}
 
-/*  small screen */
-.marquee .marquee_stage_small { height: inherit; position: relative; overflow: hidden; }
-.marquee .marquee_stage_small .marquee_panel { height: inherit; position: absolute; top: 0px; left: 0px; width: 100%; }
 
-.marquee .marquee_stage_small .marquee_panel .panel_content { display: none; }
+jQuery(document).ready(function(){
 
-@media screen and (max-width: 600px) {
+	deersGatherData();
+	deersMeasureScreen();
+	setDebuger();
+	});
 
-	.marquee { height: 200px; }
-	.marquee .marquee_panel { background-size: cover; background-position: 75% 0px; }
-	.marquee .marquee_panel .panel_caption { width: 75%; margin: 0px; padding: 10px 10px 10px 10px; text-align: center; }
-	.marquee .marquee_panel .panel_caption h3 { font-size: 1.4em; }
+function deersMultiPanel(){
+
+	deersVars.timePassed = 0;
+	deersVars.autoPlay = true;
+
+	// clear HTML from deers and add stage elements
+	jQuery('.deers').html('').append('<div class="deers_stage_large"></div>');
+	jQuery('.deers_stage_large').append('<div class="deers_container_1"></div><div class="deers_nav"></div>');
+	
+	// Generate navigation and links
+	for(i=0; i<deersVars.totalPanels; i++){
+		jQuery('.deers_nav').append('<div></div>');
+	}
+	
+	// Detect hover over deers
+	jQuery('.deers').hover(
+		function(){
+			deersVars.autoPlay = false;
+			jQuery(this).removeClass('autoplay');
+		},
+		function(){
+			deersVars.autoPlay = true;
+			deersVars.timePassed = 0;
+			jQuery(this).addClass('autoplay');
+		}
+	);
+	
+	jQuery('.deers_nav div').on('click', function(){
+
+		var navClicked = jQuery(this).index();
+
+		if(deersVars.inTansition){
+			//do nothing
+		}else{
+
+			deersVars.currentPanel = navClicked + 1;
+			deersVars.inTansition = true;
+			
+			// set the navigation state
+			jQuery('.deers_nav div').removeClass('selected');
+			jQuery(this).addClass('selected');
+	
+			// inject panel container
+			jQuery('.deers_stage_large').append('<div class="deers_container_2" style="opacity:0;"></div>');
+			
+			jQuery('.deers_container_2').html(deersVars.panelContent[navClicked]).animate({opacity:1},500,function(){
+			jQuery('.deers_container_1').remove();
+			jQuery(this).addClass('deers_container_1').removeClass('deers_container_2');
+			deersVars.inTansition = false;
+			setDebuger(); 
+			
+			});
+ 
+		}
+
+		setDebuger();
+
+	});
+	
+	// auto click first nav element
+	jQuery('.deers_nav div:first').trigger('click');
+
+}
+
+function deersSinglePanel(){
+
+	// clear HTML from deers and add stage small
+	jQuery('.deers').html('').append('<div class="deers_stage_small">'+deersVars.panelContent[0]+'</div>');
+	
+	var getLink = jQuery('.deers .deers_stage_small').find('a:nth-child(1)').attr('href');  /* grab first hyperlink url, add hyperlink to title */
+	var getTitle = jQuery('.deers .deers_stage_small h3').html();
+	var getFullImage = jQuery('.deers .deers_stage_small .deers_panel').attr('data-full');
+	jQuery('.deers .deers_stage_small h3').html('<a href="'+getLink+'">'+getTitle+'</a>');
+	jQuery('.deers .deers_stage_small .deers_panel').css('background-image','url('+getFullImage+')');  /* replace background-image with smalle file */
+	
+	setDebuger();
+}
+
+function deersMeasureScreen(){
+	// measure screen size
+	if(jQuery('.deers').width() > 600 ){
+		deersVars.screenSize = 'large';
+		deersMultiPanel();
+	}else{
+		deersVars.screenSize = 'small';
+	}
+}
+
+function deersGatherData(){
+// create and store HTML for panels
+jQuery('.deers_data .deers_panel').each(function(index){
+
+	deersVars.totalPanels = index + 1;
+
+	var imageFull = jQuery(this).attr('data-image-full');
+	var imageLarge = jQuery(this).attr('data-image-large');
+	var panelCaption = jQuery(this).find('.panel_caption').html();
+
+	deersVars.panelContent[index] = '<div class="deers_panel" style="background-image:url('+imageFull+');" data-full="'+imageLarge+'"><div class="panel_caption">'+panelCaption+'</div></div>';
+
+});
+
+setInterval (deersAdvance, 100);
 	
 }
 
+function setDebuger(){
+	jQuery('.screenSize').html('deersVars.screenSize = '+deersVars.screenSize);
+	jQuery('.autoPlay').html('deersVars.autoPlay = '+deersVars.autoPlay);
+	jQuery('.totalPanels').html('deersVars.totalPanels = '+deersVars.totalPanels);
+	jQuery('.currentPanel').html('deersVars.currentPanel = '+deersVars.currentPanel);
+	jQuery('.timePassed').html('deersVars.timePassed = '+deersVars.timePassed);
+	jQuery('.timeToChange').html('deersVars.timeToChange = '+deersVars.timeToChange);
+	jQuery('.inTansition').html('deersVars.inTansition = '+deersVars.inTansition);	
+}
