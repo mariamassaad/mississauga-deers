@@ -99,6 +99,6 @@ function register_my_custom_submenu_page() {
 function my_custom_submenu_page_callback() { echo '<div class="wrap"><div id="icon-tools" class="icon32"></div>'; echo '<h2>Options Page</h2>'; echo 
 '</div>'; } 
 
-add_action('admin_menu', 'register_my_custom_submenu_page'); /** Calls on the function  */
+add_action('admin_menu', 'register_my_custom_submenu_page'); /** Calls on the function to add the tab on the options */
 
 ?>
