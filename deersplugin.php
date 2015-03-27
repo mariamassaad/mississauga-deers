@@ -96,8 +96,22 @@ add_shortcode ('deers' , 'deers_shortcode'); /** Calls on the shortcode function
 function register_my_custom_submenu_page() { 
 	add_submenu_page( '/edit.php?post_type=deers_image', 'Options', 'Options', 'manage_options', 'options-page', 'my_custom_submenu_page_callback' ); } 
 
-function my_custom_submenu_page_callback() { echo '<div class="wrap"><div id="icon-tools" class="icon32"></div>'; echo '<h2>Options Page</h2>'; echo 
-'</div>'; } 
+function my_custom_submenu_page_callback() { 
+echo '<div class="wrap">
+<div id="icon-tools" class="icon32">
+</div>'; 
+
+echo '<h2>Options</h2>'; 
+
+echo '<h3>Number of posts</h3>';
+
+/** echo '<textarea class="box">'.$var.'</textarea>'; */
+
+/** $deersPostNumber = $_POST['deersPostNumber'];
+print ($deersPostNumber); */
+
+
+echo '</div>'; } 
 
 add_action('admin_menu', 'register_my_custom_submenu_page'); /** Calls on the function to add the tab on the options */
 
