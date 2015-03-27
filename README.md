@@ -66,6 +66,6 @@ CREDITS:
 
 Francis Lam, Jan Uy, Mariam Assaad
 
-Thank you for respecting the time and effort that went into making this plugin possible.
+Thank you for respecting the time and effort 
 
 ----------------------------------------------------------
